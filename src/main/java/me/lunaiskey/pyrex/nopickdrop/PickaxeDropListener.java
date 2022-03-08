@@ -2,7 +2,7 @@ package me.lunaiskey.pyrex.nopickdrop;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,6 +11,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -79,5 +81,14 @@ public class PickaxeDropListener implements Listener {
                 respawnAddBack.remove(player.getUniqueId());
             }
         });
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
+    public void onEntityClick(PlayerInteractEntityEvent e) {
+        Entity clicked = e.getRightClicked();
+        ItemStack item = e.getPlayer().getInventory().getItemInMainHand();
+        if (clicked instanceof ItemFrame || clicked instanceof ArmorStand) {
+            if (item.getType() == Material.DIAMOND_PICKAXE) {e.setCancelled(true);}
+        }
     }
 }
