@@ -1,19 +1,32 @@
 package me.lunaiskey.pyrex.nopickdrop;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.*;
+
 public class PickaxeDropListener implements Listener {
+
+    private NoPickDrop plugin;
+
+    public PickaxeDropListener(NoPickDrop plugin) {
+        this.plugin = plugin;
+    }
+
+    private Map<UUID,List<ItemStack>> respawnAddBack = new HashMap<>();
 
     @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
     public void onPickDrop(PlayerDropItemEvent e) {
@@ -37,6 +50,34 @@ public class PickaxeDropListener implements Listener {
         if (e.getCurrentItem().getType() == Material.DIAMOND_PICKAXE) {
             e.setCancelled(true);
         }
+    }
 
+    @EventHandler
+    public void onDeath(PlayerDeathEvent e) {
+        if (e.getKeepInventory()) {return;}
+        List<ItemStack> addBack = new ArrayList<>();
+        for (ItemStack item : e.getDrops()) {
+            if (item.getType() == Material.DIAMOND_PICKAXE) {
+                addBack.add(item.clone());
+                item.setType(Material.AIR);
+
+            }
+        }
+        respawnAddBack.put(e.getEntity().getUniqueId(),addBack);
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent e) {
+        Player player = e.getPlayer();
+        Bukkit.getScheduler().runTask(plugin,()->{
+            if (respawnAddBack.containsKey(player.getUniqueId())) {
+                List<ItemStack> items = respawnAddBack.get(player.getUniqueId());
+                if (items.isEmpty()) {return;}
+                for (ItemStack item : items) {
+                    player.getInventory().addItem(item);
+                }
+                respawnAddBack.remove(player.getUniqueId());
+            }
+        });
     }
 }

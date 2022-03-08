@@ -8,7 +8,7 @@ public final class NoPickDrop extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        Bukkit.getPluginManager().registerEvents(new PickaxeDropListener(),this);
+        Bukkit.getPluginManager().registerEvents(new PickaxeDropListener(this),this);
     }
 
     @Override

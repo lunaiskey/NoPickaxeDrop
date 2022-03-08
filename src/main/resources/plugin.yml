@@ -1,6 +1,6 @@
-name: PyrexNoPickaxeDrop
+name: NoPickaxeDrop
 version: '${project.version}'
 main: me.lunaiskey.pyrex.nopickdrop.NoPickDrop
 api-version: 1.17
 authors: [ Lunaiskey ]
-description: Made for PyrexMC.
+description: Stops you from dropping your diamond pickaxe.
