@@ -1,0 +1,6 @@
+name: PyrexNoPickaxeDrop
+version: '${project.version}'
+main: me.lunaiskey.pyrex.nopickdrop.NoPickDrop
+api-version: 1.17
+authors: [ Lunaiskey ]
+description: Made for PyrexMC.
