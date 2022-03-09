@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -45,13 +46,34 @@ public class PickaxeDropListener implements Listener {
         Inventory clickedInv = e.getClickedInventory();
         Player player = (Player) e.getWhoClicked();
         if (e.getClickedInventory() == null) {return;}
+        if (e.getView().getType() == InventoryType.CREATIVE) {return;}
         //Debug messages please ignore.
         //player.sendMessage("View: "+ view.getType());
         //player.sendMessage("Clicked: "+clickedInv.getType());
-        if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) {return;}
-        if (e.getCurrentItem().getType() == Material.DIAMOND_PICKAXE) {
-            e.setCancelled(true);
+        //player.sendMessage("ClickType: "+e.getClick());
+        //player.sendMessage("Slot: "+e.getSlot());
+
+
+        if (e.getCurrentItem() == null) {return;}
+        if (e.getClick() == ClickType.NUMBER_KEY) {
+            int button = e.getHotbarButton();
+            ItemStack hotbarItem = player.getInventory().getItem(button);
+
+            if (e.getCurrentItem().getType() == Material.DIAMOND_PICKAXE) {
+                e.setCancelled(true);
+            }
+            if (hotbarItem != null) {
+                if (hotbarItem.getType() == Material.DIAMOND_PICKAXE) {
+                    e.setCancelled(true);
+                }
+            }
+            //player.sendMessage("hotbar: "+button);
+        } else {
+            if (e.getCurrentItem().getType() == Material.DIAMOND_PICKAXE) {
+                e.setCancelled(true);
+            }
         }
+
     }
 
     @EventHandler
